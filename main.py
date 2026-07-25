@@ -19,10 +19,10 @@ def main():
             action = "ignore"
         print(f"{index}, {item['title']}")
         print(item['url'])
-        print(f"Type: {item["type"]}")
-        print(f"Confidence: {item["confidence"]}")
+        print(f"Type: {item['type']}")
+        print(f"Confidence: {item['confidence']}")
         print(f"Action: {action}")
-        print(f"Scores: {item["scores"]}")
+        print(f"Scores: {item['scores']}")
         print("---------------")
 
 if __name__ == "__main__":
