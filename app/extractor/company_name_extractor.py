@@ -98,8 +98,8 @@ def extract_company_name(html: str, url: str) -> dict:
         try:
             result = extractor(soup)
             if result:
-                return {"company_name": result}
+                return str(result)
         except Exception:
             continue
 
-    return {"company_name": from_domain(url)}
+    return str(from_domain(url))
