@@ -1,0 +1,29 @@
+
+SOCIAL_TEMPLATE = {
+    "linkedin": [],
+    "facebook": [],
+    "instagram": [],
+    "twitter": [],
+    "youtube": [],
+    "github": [],
+    "medium": [],
+    "telegram": [],
+    "discord": [],
+}
+
+def build_lead(*, website: str, source_url: str, company_name: dict, emails: list[str], phones: list[str], socials: dict,) -> dict:
+    """Build a lead object"""
+
+    merged_socials = {platform: socials.get(platform, []).copy() for platform in SOCIAL_TEMPLATE}
+
+    lead = {
+        "company_name": company_name,
+        "website": website,
+        "emails": sorted(set(emails)),
+        "phones": sorted(set(phones)),
+        "socials": merged_socials,
+        "source_url": source_url,
+        "status": "success",
+    }
+
+    return lead
