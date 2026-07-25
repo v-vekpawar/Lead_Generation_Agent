@@ -1,0 +1,5 @@
+pandas
+playwright
+beautifulsoup4
+ddgs
+python-dotenv
