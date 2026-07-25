@@ -6,7 +6,7 @@ PHONE_PATTERNS = [
     r"\b\d{2,4}[\s-]\d{6,8}\b"             # landline style
 ]
 
-def extract_phone_numbers(text):
+def extract_phones(text):
     phones=set()
     if not text:
         return []
