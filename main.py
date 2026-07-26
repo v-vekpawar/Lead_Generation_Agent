@@ -1,29 +1,35 @@
+import asyncio
+import json
+
 from app.search.search import search_companies
 from app.utils.url_filters import filter_company_urls
 from app.classifier.url_classifier import classify_results
+from app.pipeline.website_pipeline import process_websites
 
-def main():
-    query = input("Enter your lead search query: ")
-    results = search_companies(query, max_results=30)
+MAX_SEARCH_RESULT = 30
+SCRAPER_CONCURRENCY = 5
 
-    filtered_results = filter_company_urls(results)
+async def main():
+    query = input("Enter your lead search query: ").strip()
+    print("\nSearching...\n")
+    search_results = search_companies(query, max_results=MAX_SEARCH_RESULT)
+    filtered_results = filter_company_urls(search_results)
     classified_results = classify_results(filtered_results)
-    print("\nClassified Company Websites:\n")
 
-    for index, item in enumerate(classified_results, start=1):
-        if item["type"]=="company":
-            action = "scrape_company"
-        elif item["type"] in ["directory", "article"]:
-            action = "extract_company_links"
-        else:
-            action = "ignore"
-        print(f"{index}, {item['title']}")
-        print(item['url'])
-        print(f"Type: {item['type']}")
-        print(f"Confidence: {item['confidence']}")
-        print(f"Action: {action}")
-        print(f"Scores: {item['scores']}")
-        print("---------------")
+    company_results = [result for result in classified_results if result["type"]=="company"]
+
+    if not company_results:
+        print("No company websites found.")
+        return
+
+    websites = [result["url"] for result in company_results]
+    print(f"Found {len(websites)} company websites.")
+    print("Scraping websites...")
+
+    leads = await process_websites(websites=websites, search_query=query, source_url=None, concurrency=SCRAPER_CONCURRENCY,)
+    print(f"\nGenerated {len(leads)} leads\n")
+
+    print(json.dumps(leads,indent=4,ensure_ascii=False))
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

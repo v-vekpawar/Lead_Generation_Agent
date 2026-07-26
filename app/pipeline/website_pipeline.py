@@ -10,7 +10,7 @@ from app.extractor.company_name_extractor import extract_company_name
 
 from app.pipeline.lead_builder import build_lead
 
-async def process_scraped_website(scraped_result: dict, source_url: str) -> dict:
+async def process_scraped_website(scraped_result: dict, search_query: str, source_url: str | None = None,) -> dict:
     """Process one scraped website into a Lead"""
 
     website = scraped_result["url"]
@@ -32,7 +32,7 @@ async def process_scraped_website(scraped_result: dict, source_url: str) -> dict
                 "telegram": [],
                 "discord": [],
             },
-            "source_url": source_url,
+            "search_query": search_query,
             "status": "failed",
             "error": scraped_result.get("error"),
         }
@@ -54,6 +54,7 @@ async def process_scraped_website(scraped_result: dict, source_url: str) -> dict
 
         lead = build_lead(
             website=website,
+            search_query=search_query,
             source_url=source_url,
             company_name=company_name,
             emails=emails,
@@ -81,12 +82,13 @@ async def process_scraped_website(scraped_result: dict, source_url: str) -> dict
                 "telegram": [],
                 "discord": [],
             },
+            "search_query": search_query,
             "source_url": source_url,
             "status": "failed",
             "error": str(e),
         }
 
-async def process_websites(websites: list[str], source_url: str, concurrency: int=5,) -> list[dict]:
+async def process_websites(websites: list[str], search_query: str, source_url: str | None = None, concurrency: int=5,) -> list[dict]:
     """
     Complete pipeline.
 
@@ -104,7 +106,7 @@ async def process_websites(websites: list[str], source_url: str, concurrency: in
 
     scraped_results = await scrape_websites(websites, concurrency=concurrency)
 
-    tasks = [process_scraped_website(scraped, source_url) for scraped in scraped_results]
+    tasks = [process_scraped_website(scraped, search_query, source_url, ) for scraped in scraped_results]
 
     leads = await asyncio.gather(*tasks)
 
