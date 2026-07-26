@@ -11,7 +11,7 @@ SOCIAL_TEMPLATE = {
     "discord": [],
 }
 
-def build_lead(*, website: str, source_url: str, company_name: dict, emails: list[str], phones: list[str], socials: dict,) -> dict:
+def build_lead(*, website: str, source_url: str, company_name: str, emails: list[str], phones: list[str], socials: dict,) -> dict:
     """Build a lead object"""
 
     merged_socials = {platform: socials.get(platform, []).copy() for platform in SOCIAL_TEMPLATE}
