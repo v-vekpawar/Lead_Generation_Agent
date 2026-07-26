@@ -86,6 +86,18 @@ def extract_social_links(social_links: list[str]) -> dict[str, list[str]]:
 
             seen.add(normalized)
             platform = get_platform(normalized)
+            # Ignore individual Instagram content
+            if platform == "instagram":
+                path = urlparse(normalized).path.lower()
+
+                if ( path.startswith("/p/") or path.startswith("/reel/") or path.startswith("/stories/") or path.startswith("/explore/") ):
+                    continue
+
+            if platform == "youtube":
+                path = urlparse(normalized).path.lower()
+
+                if ( path.startswith("/watch") or path.startswith("/playlist") or path.startswith("/results") or path.startswith("/shorts") ):
+                    continue
 
             if platform is None:
                 continue

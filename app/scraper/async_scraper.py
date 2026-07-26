@@ -30,7 +30,17 @@ async def scrape_single_page(browser, url):
             )
         )
 
-        await page.goto(url, timeout=PAGE_TIMEOUT, wait_until="domcontentloaded",)
+        for attempt in range(2):
+            try:
+                await page.goto(url, timeout=PAGE_TIMEOUT, wait_until="domcontentloaded",)
+                break
+
+            except Exception:
+                if attempt == 1:
+                    raise
+
+                await asyncio.sleep(2)
+
         await page.wait_for_timeout(WAIT_AFTER_LOAD)
 
         result["title"] = await page.title()
@@ -69,7 +79,7 @@ async def scrape_websites(urls, concurrency=5,):
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=True)
 
-        semaphore = asyncio.Semaphore(concurrency        )
+        semaphore = asyncio.Semaphore(concurrency)
 
         async def worker(url):
             async with semaphore:

@@ -98,8 +98,8 @@ def extract_company_name(html: str, url: str) -> dict:
         try:
             result = extractor(soup)
             if result:
-                return str(result)
+                return str(result).rstrip("-|:–— ").strip()
         except Exception:
             continue
 
-    return str(from_domain(url))
+    return str(from_domain(url)).rstrip("-|:–— ").strip()
